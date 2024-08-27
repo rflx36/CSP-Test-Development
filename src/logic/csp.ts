@@ -1,8 +1,9 @@
-import { ICSP, IInstructorAllocation, IRoomAllocation } from "../types/csp_types";
+import { ICSP, IInstructorAllocation, IRoomAllocation, TimeAllocationBufferType } from "../types/csp_types";
 import { CourseType, CurrentSemester, InstructorType, Subject, SubjectHasLabLec, TimeType, WeekType, YearType } from "../types/types";
+import CheckAvailability from "./csp utils/check_availability";
 import CheckInstructorSessionAvailability from "./csp utils/check_availability_instructor";
 import CheckRoomSessionAvailability from "./csp utils/check_availability_room";
-import { ConvertHourToValue, ConvertTimeToValue } from "./time_utils/time_converter";
+import { ConvertHourToValue, ConvertTimeToValue, ConvertValueToTime } from "./time_utils/time_converter";
 import GenerateTimeSlots, { AddTime, GetPrecedingDay } from "./time_utils/time_modifier";
 
 
@@ -11,36 +12,41 @@ import GenerateTimeSlots, { AddTime, GetPrecedingDay } from "./time_utils/time_m
 
 export default function CSP(inputs: ICSP) {
     const day_gap = 2;
-    let rooms: Array<IRoomAllocation> = [];
-    let instructors: Array<IInstructorAllocation> = [];
-
-
-    let room_test: Array<String> = [];
+    const max_session = 5;
+    // let rooms: Array<IRoomAllocation> = [];
+    // let instructors: Array<IInstructorAllocation> = [];
+    let rooms: Array<TimeAllocationBufferType> = [];
+    let instructor: Array<TimeAllocationBufferType> = [];
+    const days: Array<WeekType> = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    const break_time_start = ConvertTimeToValue(inputs.break_time_start);
+    const break_time_end = ConvertTimeToValue(inputs.break_time_end);
+    let current_room: number = 0;
+    let current_instructor: number = 0;
     let current_course: CourseType;
     let current_year: YearType;
     let current_subjects: Array<Subject | SubjectHasLabLec>;
     let current_subjects_load: Array<Subject | SubjectHasLabLec>; // for the second part of the subject within a week (partitionable:true)
     let current_subjects_load_await: Array<WeekType>;
 
-    let current_instructor: InstructorType;
+    // let current_instructor: InstructorType;
     let current_day: WeekType;
     let current_session: number;
     let current_section: string;
     let current_time_start: TimeType;
     let current_time_end: TimeType;
-    let current_room: string;
+
     const CheckSubjectIsLecLab = (s: Subject | SubjectHasLabLec) => {
         return ((s as Subject).total_hours == undefined);
     }
 
 
 
-    const SetInstructor = (time_start: TimeType, time_end: TimeType) => {
-        for (let i = 0; i < inputs.instructors.length; i++) {
-            current_instructor = inputs.instructors[i];
-            // if (CheckInstructorSessionAvailability)
-        }
-    }
+    // const SetInstructor = (time_start: TimeType, time_end: TimeType) => {
+    //     for (let i = 0; i < inputs.instructors.length; i++) {
+    //         current_instructor = inputs.instructors[i];
+    //         // if (CheckInstructorSessionAvailability)
+    //     }
+    // }
 
     const SetRoomsLab = () => {
 
@@ -103,66 +109,97 @@ export default function CSP(inputs: ICSP) {
 
             current_time_start = inputs.time_start;
             current_time_end = AddTime(inputs.time_start, current_allocation);
-            let check_availability_room = CheckRoomSessionAvailability(rooms, current_room, current_time_start, current_time_end, current_day);
-            let check_availability_instructor = CheckInstructorSessionAvailability(instructors, current_instructor, current_time_start, current_time_end, current_day);
+            // let check_availability_room = CheckRoomSessionAvailability(rooms, current_room, current_time_start, current_time_end, current_day);
+            // let check_availability_instructor = CheckInstructorSessionAvailability(instructors, current_instructor, current_time_start, current_time_end, current_day);
+            let check_availability_room = CheckAvailability(rooms, current_room, current_time_start, current_time_end, current_day);
+            let check_availability_instructor = CheckAvailability(instructor, current_instructor, current_time_start, current_time_end, current_day);
 
-
-
-            while (!check_availability_room || !check_availability_instructor) {
+            let limit = 0;
+            while (check_availability_room || check_availability_instructor) {
 
                 // current_time_start = current_time_start;
                 // current_time_end = AddTime(current_time_start, current_allocation);
 
+                if (limit >= 10000) {
+                    console.log("max loop reached");
+                    break;
 
+                }
 
                 current_time_start = AddTime(current_time_start, 30);
                 current_time_end = AddTime(current_time_end, 30);
 
-                check_availability_room = CheckRoomSessionAvailability(rooms, current_room, current_time_start, current_time_end, current_day);
-                check_availability_instructor = CheckInstructorSessionAvailability(instructors, current_instructor, current_time_start, current_time_end, current_day);
-                if (ConvertTimeToValue(current_time_end) > ConvertTimeToValue(inputs.time_end)) {
 
+                const current_time_start_value = ConvertTimeToValue(current_time_start);
+                const current_time_end_value = ConvertTimeToValue(current_time_end);
 
+                if ((current_time_start_value >= break_time_start && current_time_start_value < break_time_end) ||
+                    (current_time_end_value >= break_time_end && current_time_end_value < break_time_end)) {
+                    console.log("overlapped in break time adjusting ["+current_time_start+"-"+current_time_end+"]");
+                    continue;
+
+                }
+
+                check_availability_room = CheckAvailability(rooms, current_room, current_time_start, current_time_end, current_day);
+                check_availability_instructor = CheckAvailability(instructor, current_instructor, current_time_start, current_time_end, current_day);
+
+                // console.log("getting:"+current_time_start);
+                // check_availability_room = CheckRoomSessionAvailability(rooms, current_room, current_time_start, current_time_end, current_day);
+                // check_availability_instructor = CheckInstructorSessionAvailability(instructors, current_instructor, current_time_start, current_time_end, current_day);
+                if (current_time_end_value > ConvertTimeToValue(inputs.time_end)) {
                     current_time_start = inputs.time_start;
                     current_time_end = AddTime(inputs.time_start, current_allocation);
                     current_day = GetPrecedingDay(current_day, 1);
                 }
             }
-            console.log("[" + current.code + "]" + current_time_start + "-" + current_time_end + ":" + current_day + " Available" + " Room[" + current_room + "] Allocation:" + current_allocation);
+            console.log(current_course.code + "" + section_name + "[" + current.code + "]" + current_time_start + "-" + current_time_end + ":" + current_day + " Available" + " Room[" + inputs.rooms[current_room] + "] Allocation:" + current_allocation);
             //here
             ///check if prof available
             if (current_is_partitionable) {
                 current_subjects_load.push(current);
             }
-            const time_allocated = GenerateTimeSlots(current_time_start, current_time_end);
-            const selected_room = rooms.find(x => x.room == current_room);
-            const selected_room_index = rooms.findIndex(x => x.room == current_room);
-            const room_schedules_allocated_info = {
-                time: time_allocated,
-                day: current_day
+            const day_index = days.indexOf(current_day);
+            const current_time_end_value = ConvertTimeToValue(current_time_end);
+            const modified_time_end_value = ConvertValueToTime(current_time_end_value - 1);
+
+            rooms.push(`${current_room};${day_index};${current_time_start}`)
+            rooms.push(`${current_room};${day_index};${modified_time_end_value}`);
+            //add the allocation values 
+            instructor.push(`${current_room};${day_index};${current_time_start}`)
+            instructor.push(`${current_room};${day_index};${modified_time_end_value}`)
+
+            current_session += (current_allocation / 60) % 24;
+
+            if (current_session > max_session) {
+                current_session = 0;
+                current_day = GetPrecedingDay(current_day, 1);
             }
-            if (selected_room == undefined) {
-                const temp = [];
-                temp.push(room_schedules_allocated_info);
-                rooms.push({ room: current_room, schedule: temp });
-            }
-            else if (selected_room!.schedule.find(x => x.day == current_day) == undefined) {
-                const temp = [];
-                temp.push(room_schedules_allocated_info);
+            console.log("current:" + current_session);
+            // const time_allocated = GenerateTimeSlots(current_time_start, current_time_end);
+            // const selected_room = rooms.find(x => x.room == current_room);
+            // const selected_room_index = rooms.findIndex(x => x.room == current_room);
+            // const room_schedules_allocated_info = {
+            //     time: time_allocated,
+            //     day: current_day
+            // }
+            // if (selected_room == undefined) {
+            //     const temp = [];
+            //     temp.push(room_schedules_allocated_info);
+            //     rooms.push({ room: current_room, schedule: temp });
+            // }
+            // else if (selected_room!.schedule.find(x => x.day == current_day) == undefined) {
+            //     const temp = [];
+            //     temp.push(room_schedules_allocated_info);
 
-                rooms[selected_room_index] = { room: current_room, schedule: temp };
-            }
-            else {
-                selected_room!.schedule.find(x => x.day == current_day)?.time.push(...time_allocated);
+            //     rooms[selected_room_index] = { room: current_room, schedule: temp };
+            // }
+            // else {
+            //     selected_room!.schedule.find(x => x.day == current_day)?.time.push(...time_allocated);
+
+            //     rooms[selected_room_index] = { room: current_room, schedule: selected_room.schedule };
 
 
-                // selected_room!.schedule.push(room_schedules_allocated_info);
-
-                // rooms = rooms.map(x=> x.room == current_room?)
-                rooms[selected_room_index] = { room: current_room, schedule: selected_room.schedule };
-
-
-            }
+            // }
 
             // console.log(current_course.code + ":" + section_name + ":" + current_allocation);
         }
@@ -171,14 +208,13 @@ export default function CSP(inputs: ICSP) {
         }
         else {
 
-            console.log(rooms);
+
         }
 
     }
 
     const SetSections = (sections_amount: number) => {
 
-        current_room = inputs.rooms[0];
         for (let i = 1; i <= sections_amount; i++) {
             const section_name = (current_year + String.fromCharCode(96 + i)).toUpperCase();
             // SetRooms(section_name);
@@ -187,7 +223,8 @@ export default function CSP(inputs: ICSP) {
             current_subjects_load_await = [];
             current_session = 0;
 
-            current_room = inputs.rooms[0]
+            // current_room = inputs.rooms[0]
+
             SetSubjects(section_name, 0);
 
         }
@@ -207,8 +244,7 @@ export default function CSP(inputs: ICSP) {
         }
     }
 
-
-
+    console.log(rooms);
 
 
     // select first course

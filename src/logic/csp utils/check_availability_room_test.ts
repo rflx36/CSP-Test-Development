@@ -1,10 +1,11 @@
+import { TimeAllocationStoreType } from "../../types/csp_types";
 import { TimeType, WeekType } from "../../types/types";
 import { ConvertTimeToValue, ConvertValueToTime } from "../time_utils/time_converter";
 
 export type StorageType = `${number};${number};${TimeType}`;
 
 export default function TestCheckAvailability(
-    storage: Array<StorageType>,
+    storage: Array<TimeAllocationStoreType>,
     type_index: number,
     time_start: TimeType,
     time_end: TimeType,

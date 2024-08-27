@@ -5,6 +5,8 @@ export interface ICSP {
     data: Array<CurrentSemester>
     time_start: TimeType,
     time_end: TimeType,
+    break_time_start: TimeType,
+    break_time_end: TimeType,
     courses: Array<CourseType>
     rooms: Array<string>
 }
@@ -32,4 +34,4 @@ export interface IInstructorAllocation {
 }
 
 
-export type TimeAllocationStoreType = `${number};${number};${TimeType}`;
+export type TimeAllocationBufferType = `${number};${number};${TimeType}`;

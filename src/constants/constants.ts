@@ -4,7 +4,9 @@ export const DEFAULT_CLASS_SESSIONS: ClassSessionType = {
     time_start: "07:00",
     time_end: "21:00",
     courses: [],
-    rooms: ["101","102"]
+    rooms: ["101","102"],
+    break_time_start: "12:00",
+    break_time_end: "13:00"
 }
 
 export const DEFAULT_CLASS_SECTIONS: ClassSectionType = {

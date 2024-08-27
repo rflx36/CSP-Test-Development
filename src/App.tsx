@@ -2,21 +2,18 @@
 import ClassSectionsContainer from "./page components/class sections/sections_container"
 import ClassSessionsContainer from "./page components/class sessions/sessions_container"
 import ModalSections from "./components/modals/modal_sections"
-import Sidebar from "./components/sidebar/container";
 import { useTestStore } from "./stores/test_store"
-import Select from "./components/dropdown";
 import { useSessionStore } from "./stores/session_store";
-import { useState } from "react";
 import { useUIStore } from "./stores/ui_store";
 import { useSectionStore } from "./stores/section_store";
 import ClassInstructorsContainer from "./page components/class instructors/instructors_container";
 import ModalInstructors from "./components/modals/modal_instructors";
 import { useInstructorStore } from "./stores/instructor_store";
-import RandomizeArray from "./logic/rng";
 import GenerateSeedContainer from "./page components/class generate/generate_seed";
 import GenerateTimeSlots from "./logic/time_utils/time_modifier";
 import CSP from "./logic/csp";
-import TestCheckAvailability, { StorageType } from "./logic/csp utils/check_availability_room_test";
+import CheckAvailability from "./logic/csp utils/check_availability";
+import { TimeAllocationBufferType } from "./types/csp_types";
 
 
 
@@ -55,12 +52,16 @@ function App() {
       data: section.get.data,
       time_start: session.get.time_start,
       time_end: session.get.time_end,
+      break_time_start: session.get.break_time_start,
+      break_time_end: session.get.break_time_end,
       courses: session.get.courses,
       rooms: session.get.rooms
     }
     CSP(dat);
-    const arr: Array<StorageType> = ["0;0;01:01","0;0;02:03","0;0;02:30","0;0;04:00"];
-    TestCheckAvailability(arr,0,"03:00","04:00","monday");
+    const arr: Array<TimeAllocationBufferType> = ["0;0;01:01","0;0;02:05","0;0;01:59","0;0;05:20"];
+    // TestCheckAvailability(arr,0,"03:00","04:00","monday");
+    
+    console.log(CheckAvailability(arr,0,"03:00","04:00","monday"));
   }
 
   // const course_options = session.get.courses.map((e) => ({ label: e.code, value: e.name }));

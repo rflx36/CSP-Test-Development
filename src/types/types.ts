@@ -83,6 +83,8 @@ export interface ClassSessionType {
     time_end: TimeType,
     courses: Array<CourseType>,
     rooms: Array<string>
+    break_time_start: TimeType,
+    break_time_end: TimeType
 }
 
 
