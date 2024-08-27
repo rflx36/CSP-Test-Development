@@ -1,10 +1,10 @@
-import { ClassSectionType, ClassSessionType, UIStateType } from "../types/types"
+import { ClassInstructorType, ClassSectionType, ClassSessionType, UIStateType } from "../types/types"
 
 export const DEFAULT_CLASS_SESSIONS: ClassSessionType = {
     time_start: "07:00",
     time_end: "21:00",
     courses: [],
-    rooms: []
+    rooms: ["101","102"]
 }
 
 export const DEFAULT_CLASS_SECTIONS: ClassSectionType = {
@@ -14,9 +14,16 @@ export const DEFAULT_CLASS_SECTIONS: ClassSectionType = {
     data: []
 }
 
+export const DEFAULT_CLASS_INSTRUCTORS: ClassInstructorType = {
+    instructors: []
+}
+
 export const DEFAULT_UI_STATE: UIStateType = {
-    modal: "sections",
+    modal: "closed",
     sidebar_is_active: true,
     sidebar_active: "scheduler",
-    sidebar_active_children: "time"
+    sidebar_active_children: "time",
+    dropdown_course: ""
 }
+
+

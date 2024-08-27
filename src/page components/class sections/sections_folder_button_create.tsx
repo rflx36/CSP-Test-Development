@@ -8,6 +8,7 @@ export default function SectionsButtonCreate() {
     const ui_state = useUIStore();
 
     const ToggleModal = () => {
+        
         let new_ui_state =ui_state.get;
         new_ui_state.modal = "sections";
         ui_state.set(new_ui_state);

@@ -1,4 +1,4 @@
-import { ClassSectionType, ClassSessionType, UIStateType } from "./types";
+import { ClassInstructorType, ClassSectionType, ClassSessionType, UIStateType } from "./types";
 
 export interface MutatorSectionType {
     get: ClassSectionType,
@@ -10,7 +10,13 @@ export interface MutatorSessionType {
     set: (property?: ClassSessionType) => void
 }
 
+export interface MutatorInstructorType {
+    get: ClassInstructorType,
+    set: (property?: ClassInstructorType) => void
+}
+
 export interface MutatorUIType {
     get: UIStateType,
     set: (property?: UIStateType) => void
 }
+

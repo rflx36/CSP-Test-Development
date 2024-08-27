@@ -12,6 +12,7 @@ import ChipContainer from "../../components/chip/container";
 export default function ClassSessionsContainer() {
   const [timeStart, setTimeStart] = useState("07:00");
   const [timeEnd, setTimeEnd] = useState("21:00");
+  const [roomAmount, setRoomAmount] = useState(1);
   const [course, setCourse] = useState("");
   const [code, setCode] = useState("");
   const session = useSessionStore();
@@ -32,27 +33,32 @@ export default function ClassSessionsContainer() {
 
   return (
     <Border>
-      <Baseline flex>
-        <Input label="Start time" type="time" value={timeStart} onChange={x => setTimeStart(x)} />
-        <Input label="End time" type="time" value={timeEnd} onChange={x => setTimeEnd(x)} />
-      </Baseline>
+      <div className="flex">
+        <Baseline flex>
+          <Input label="Start time" type="time" value={timeStart} onChange={x => setTimeStart(x)} />
+          <Input label="End time" type="time" value={timeEnd} onChange={x => setTimeEnd(x)} />
 
+        </Baseline>
+        <Baseline widthFull>
+          <Input label="Room Amount" type="number" value={roomAmount} onChange={x => setRoomAmount(x)} />
+        </Baseline>
+      </div>
       <Baseline>
         <div className="flex items-end">
-          <Input label="Course name" type="text" value={course} onChange={x => setCourse(x)} size="large"/>
-          <Input label="Abbreviation" type="text" value={code} onChange={x => setCode(x)} size="small"/>
-          <Button text="Add Course" onClick={AddCourse} isDisabled={(course == "" || code == "")}  />
+          <Input label="Course name" type="text" value={course} onChange={x => setCourse(x)} size="large" />
+          <Input label="Abbreviation" type="text" value={code} onChange={x => setCode(x)} size="small" />
+          <Button text="Add Course" onClick={AddCourse} isDisabled={(course == "" || code == "")} />
         </div>
         <ChipContainer>
-            {session.get.courses.map((e, i) => {
+          {session.get.courses.map((e, i) => {
 
-              return <Chip key={i} text={e.code} title={e.name} onRemove={() => RemoveCourse(i)} />
-            })}
-          </ChipContainer>
+            return <Chip key={i} text={e.code} title={e.name} onRemove={() => RemoveCourse(i)} />
+          })}
+        </ChipContainer>
+
       </Baseline>
 
-    
-            
+
 
     </Border>
   )

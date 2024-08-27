@@ -8,17 +8,36 @@ type m = h | '25' | '26' | '27' | '28' | '29' | '30'
     | '41' | '42' | '43' | '44' | '45' | '46' | '47' | '48' | '49' | '50'
     | '51' | '52' | '53' | '54' | '55' | '56' | '57' | '58' | '59' | '60';
 
-
+// type m = "00" | "30";
 export type TimeType = `${h}:${m}`;
 export type YearType = 1 | 2 | 3 | 4;
 export type SemesterType = "1st" | "2nd";
 export type ModalsType = "sections" | "instructors" | "closed";
+export type WeekType = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday";
+
+
+export interface SessionSchedule {
+    title: string,
+    code: string,
+    time_start: TimeType,
+    time_end: TimeType,
+    instructor: string,
+    week: WeekType
+}
+export interface DaySchedule {
+    year: YearType,
+    section: string,
+    subject_sessions: Array<SessionSchedule>,
+    room: string
+}
+
 
 export interface Subject {
     title: string,
     code: string,
     total_hours: number,
     is_dividable: boolean,
+    capacity: number,
 }
 
 export interface SubjectHasLabLec {
@@ -27,7 +46,8 @@ export interface SubjectHasLabLec {
     lab_total_hours: number,
     lab_is_dividable: boolean,
     lec_total_hours: number,
-    lec_is_dividable: boolean
+    lec_is_dividable: boolean,
+    capacity: number
 }
 
 export interface CurrentSemester {
@@ -50,7 +70,8 @@ export interface UIStateType {
     modal: ModalsType,
     sidebar_is_active: boolean,
     sidebar_active: "dashboard" | "scheduler",
-    sidebar_active_children: "time" | "rooms " | "courses " | "subjects" | "instructors"
+    sidebar_active_children: "time" | "rooms " | "courses " | "subjects" | "instructors",
+    dropdown_course: string
 }
 
 export interface CourseType {
@@ -64,3 +85,16 @@ export interface ClassSessionType {
     rooms: Array<string>
 }
 
+
+
+export interface InstructorType {
+    first_name: string,
+    last_name: string,
+    fulltime: boolean,
+    preffered_subjects: Array<Subject | SubjectHasLabLec>,
+    load: number
+}
+
+export interface ClassInstructorType {
+    instructors: Array<InstructorType>
+}

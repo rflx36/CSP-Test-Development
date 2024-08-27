@@ -4,5 +4,5 @@ import { DEFAULT_UI_STATE } from "../constants/constants";
 
 export const useUIStore = create<MutatorUIType>((change) => ({
     get: DEFAULT_UI_STATE,
-    set: (x) => change({ get: x })
+    set: (x?) => change((x != undefined) ? { get: x } : (state) => ({ get: state.get }))
 }))
