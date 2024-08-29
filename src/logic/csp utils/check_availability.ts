@@ -1,6 +1,6 @@
 import { TimeAllocationBufferType } from "../../types/csp_types";
 import { TimeType, WeekType } from "../../types/types";
-import { ConvertTimeToValue } from "../time_utils/time_converter";
+import { ConvertTimeToValue } from "../time utils/time_converter";
 
 
 export default function CheckAvailability(

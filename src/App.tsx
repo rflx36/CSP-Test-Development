@@ -10,10 +10,11 @@ import ClassInstructorsContainer from "./page components/class instructors/instr
 import ModalInstructors from "./components/modals/modal_instructors";
 import { useInstructorStore } from "./stores/instructor_store";
 import GenerateSeedContainer from "./page components/class generate/generate_seed";
-import GenerateTimeSlots from "./logic/time_utils/time_modifier";
+import GenerateTimeSlots from "./logic/time utils/time_modifier";
 import CSP from "./logic/csp";
 import CheckAvailability from "./logic/csp utils/check_availability";
 import { TimeAllocationBufferType } from "./types/csp_types";
+import CheckInputsEligibility from "./logic/check_inputs_eligibility";
 
 
 
