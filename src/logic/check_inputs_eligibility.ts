@@ -40,6 +40,7 @@ export default function CheckInputsEligibility(inputs: ICSP) {
                     const subject = current.subjects[k] as Subject;
                     current_hours_occupied += subject.total_hours;
                 }
+                current_total_subjects++;
             }
             total_subjects +=  current_total_subjects * current.sections;
             room_hours_occupied += current_hours_occupied * current.sections;

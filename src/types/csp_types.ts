@@ -1,4 +1,4 @@
-import { CourseType, CurrentSemester, InstructorType, TimeType} from "../types/types";
+import { CourseType, CurrentSemester, InstructorType, Subject, SubjectHasLabLec, TimeType, WeekType } from "../types/types";
 
 export interface ICSP {
     instructors: Array<InstructorType>,
@@ -13,3 +13,8 @@ export interface ICSP {
 
 
 export type TimeAllocationBufferType = `${number};${number};${TimeType}`;
+
+export interface IPendingSubsequentSubjectDayInterval {
+    day: WeekType,
+    subject: Subject | SubjectHasLabLec
+}
