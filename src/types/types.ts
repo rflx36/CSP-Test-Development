@@ -37,7 +37,7 @@ export interface Subject {
     code: string,
     total_hours: number,
     is_dividable: boolean,
-    capacity: number,
+  
 }
 
 export interface SubjectHasLabLec {
@@ -47,7 +47,7 @@ export interface SubjectHasLabLec {
     lab_is_dividable: boolean,
     lec_total_hours: number,
     lec_is_dividable: boolean,
-    capacity: number
+    
 }
 
 export interface CurrentSemester {
@@ -82,7 +82,8 @@ export interface ClassSessionType {
     time_start: TimeType,
     time_end: TimeType,
     courses: Array<CourseType>,
-    rooms: Array<string>
+    rooms: Array<string>,
+    rooms_lab: Array<string>,
     break_time_start: TimeType,
     break_time_end: TimeType
 }

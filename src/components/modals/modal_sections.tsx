@@ -65,7 +65,7 @@ export default function ModalSections() {
                 lab_is_dividable: labPartitionable,
                 lec_total_hours: lecHours,
                 lec_is_dividable: lecPartitionable,
-                capacity: sectionAmount
+
             }
             setSubjects(x => [...x, subject_data]);
         }
@@ -75,7 +75,7 @@ export default function ModalSections() {
                 code: subjectCode,
                 total_hours: baseHours,
                 is_dividable: basePartitionable,
-                capacity: sectionAmount
+
             }
             setSubjects(x => [...x, subject_data]);
         }
