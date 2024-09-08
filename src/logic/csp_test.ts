@@ -40,7 +40,6 @@ export default class SchedulingCSP {
     private current_day: WeekType = "monday";
     private current_subsequent_day: WeekType = "monday";
     private current_is_partitionable: boolean = false;
-
     constructor(inputs: ICSP) {
         this.data = inputs.data;
         this.instructors = inputs.instructors;
@@ -84,7 +83,24 @@ export default class SchedulingCSP {
         // }
 
     }
+    private VerifyTotalAvailability() {
+        //checks availability with the proposed time_start and time_end
 
+        const check_availability_room = CheckAvailability(this.rooms_allocation, this.current_room, this.current_time_start, this.current_time_end, this.current_day);
+        const check_availability_instructor = CheckAvailability(this.instructors_allocation, this.current_instructor, this.current_time_start, this.current_time_end, this.current_day);
+
+        if (this.current_is_partitionable) {
+            //if partitionable also checks for the subsequent schedule 
+
+            const check_availability_subsequent_room = CheckAvailability(this.rooms_allocation, this.current_room, this.current_time_start, this.current_time_end, this.current_subsequent_day);
+            const check_availability_subsequent_instructor = CheckAvailability(this.instructors_allocation, this.current_instructor, this.current_time_start, this.current_time_end, this.current_subsequent_day);
+            return (check_availability_room || check_availability_instructor || check_availability_subsequent_room || check_availability_subsequent_instructor)
+        }
+        else {
+            return (check_availability_room || check_availability_instructor);
+        }
+
+    }
     private CheckSubjectsAvailability() {
         this.current_is_partitionable = this.current_subject.is_dividable;
         const current_allocation = ConvertHourToValue((this.current_is_partitionable) ? (this.current_subject.total_hours / 2) : this.current_subject.total_hours);
@@ -94,11 +110,11 @@ export default class SchedulingCSP {
 
         this.current_subsequent_day = GetPrecedingDay(this.current_day, this.subsequent_subject_day_interval);
 
-        let check_availability_room = CheckAvailability(this.rooms_allocation, this.current_room, this.current_time_start, this.current_time_end, this.current_day);
-        let check_availability_instructor = CheckAvailability(this.instructors_allocation, this.current_instructor, this.current_time_start, this.current_time_end, this.current_day);
         let limit = 0;
         let week_allocation_buffer: Array<WeekType> = [];
-        while (check_availability_instructor || check_availability_room) {
+
+        let is_not_available = true;
+        while (is_not_available) {
             limit++;
             if (limit >= 10000) {
                 console.log("max loop reached");
@@ -126,17 +142,7 @@ export default class SchedulingCSP {
                 continue;
             }
 
-            //checks availability with the proposed time_start and time_end
-            check_availability_room = CheckAvailability(this.rooms_allocation, this.current_room, this.current_time_start, this.current_time_end, this.current_day);
-            check_availability_instructor = CheckAvailability(this.instructors_allocation, this.current_instructor, this.current_time_start, this.current_time_end, this.current_day);
-
-            //if partitionable also checks for the subsequent schedule 
-            if (this.current_is_partitionable) {
-
-                check_availability_room = CheckAvailability(this.rooms_allocation, this.current_room, this.current_time_start, this.current_time_end, this.current_subsequent_day);
-                check_availability_instructor = CheckAvailability(this.instructors_allocation, this.current_instructor, this.current_time_start, this.current_time_end, this.current_subsequent_day);
-            }
-
+            is_not_available = this.VerifyTotalAvailability();
             //skips the proposed time_start and time_end if it goes beyond time end of the day and proceeds to the next following day
             if (current_time_end_value > ConvertTimeToValue(this.time_end)) {
                 this.current_time_start = this.time_start;
@@ -186,7 +192,7 @@ export default class SchedulingCSP {
             this.current_subject = current_lab;
 
             if (!this.CheckSubjectsAvailability()) {
-                
+
                 console.log("backtracked");
                 return false;
             }
@@ -197,17 +203,17 @@ export default class SchedulingCSP {
             const current = this.current_subjects[iterate] as Subject;
             this.current_subject = current;
             if (!this.CheckSubjectsAvailability()) {
-                
+
                 console.log("backtracked");
                 return false;
-                
+
             }
             this.AddSubjectsAllocation();
         }
 
         if (this.current_subjects[iterate + 1] != undefined) {
             if (!this.SetSubjects(iterate + 1)) {
-                
+
                 console.log("backtracked");
                 return false;
             }
@@ -225,14 +231,13 @@ export default class SchedulingCSP {
             // current_room = inputs.rooms[0]
 
             if (!this.SetSubjects(0)) {
-                
+
                 console.log("backtracked");
                 return false;
             }
         }
         return true;
     }
-
     public Solve() {
         for (let i = 0; i < this.courses.length; i++) {
             this.current_course = this.courses[i];

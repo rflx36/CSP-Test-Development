@@ -17,39 +17,32 @@ export default function CheckAvailability(
 
     const data = allocation_store.filter(x => x.startsWith(`${type_index};${day_index};`));
     const time_allocation_list = data.map(x => x.split(';').pop() as TimeType);
+    const time_allocation_before = time_allocation_list.filter(x => ConvertTimeToValue(x) < time_start_value);
+    const time_allocation_between = time_allocation_list.filter(x => time_start_value <= ConvertTimeToValue(x) && ConvertTimeToValue(x) < time_end_value);
+    const time_allocation_after = time_allocation_list.filter(x => ConvertTimeToValue(x) > time_end_value);
+    // console.log("is allocated between "+time_start+ "-"+time_end);
+    if (time_allocation_before.length != 0) {
+        const time_allocation_before_values = time_allocation_before.map(x => ConvertTimeToValue(x));
+        const previous_time_allocation_index = Math.max(...time_allocation_before_values);
+        // console.log(time_start+"-"+time_end+JSON.stringify(ConvertValueToTime(previous_time_allocation_index)));
+
+        if (previous_time_allocation_index < time_start_value && previous_time_allocation_index % 2 == 0) {
+
+            return true;
+        }
+    }
 
 
-    const allocated = time_allocation_list.filter(x => time_start_value <= ConvertTimeToValue(x) &&  time_end_value >= ConvertTimeToValue(x));
-    // console.log(time_start+"-"+time_end);
-    // console.log(allocated);
-    return (allocated.length != 0);
+    if (time_allocation_after.length != 0) {
+        const time_allocation_after_values = time_allocation_after.map(x => ConvertTimeToValue(x));
+        const next_time_allocation_index = Math.min(...time_allocation_after_values);
 
-    // const time_allocation_before = time_allocation_list.filter(x => ConvertTimeToValue(x) < time_start_value);
-    // const time_allocation_between = time_allocation_list.filter(x => time_start_value <= ConvertTimeToValue(x) && ConvertTimeToValue(x) < time_end_value);
-    // const time_allocation_after = time_allocation_list.filter(x => ConvertTimeToValue(x) > time_end_value);
-    // // console.log("is allocated between "+time_start+ "-"+time_end);
-    // if (time_allocation_before.length != 0) {
-    //     const time_allocation_before_values = time_allocation_before.map(x => ConvertTimeToValue(x));
-    //     const previous_time_allocation_index = Math.max(...time_allocation_before_values);
-    //     console.log(time_start+"-"+time_end+JSON.stringify(ConvertValueToTime(previous_time_allocation_index)));
-
-    //     if (previous_time_allocation_index < time_start_value && previous_time_allocation_index % 2 == 0) {
-
-    //         return true;
-    //     }
-    // }
+        if (next_time_allocation_index > time_end_value && next_time_allocation_index % 2 != 0) {
 
 
-    // if (time_allocation_after.length != 0) {
-    //     const time_allocation_after_values = time_allocation_after.map(x => ConvertTimeToValue(x));
-    //     const next_time_allocation_index = Math.min(...time_allocation_after_values);
-
-    //     if (next_time_allocation_index > time_end_value && next_time_allocation_index % 2 != 0) {
-
-
-    //         return true;
-    //     }
-    // }
-    // return (time_allocation_between.length != 0);
+            return true;
+        }
+    }
+    return (time_allocation_between.length != 0);
 
 }
