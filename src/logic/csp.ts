@@ -2,6 +2,7 @@ import { ICSP, IPendingSubsequentSubjectDayInterval, TimeAllocationBufferType } 
 import { CourseType, Subject, SubjectHasLabLec, TimeType, WeekType, YearType } from "../types/types";
 import CheckInputsEligibility from "./check_inputs_eligibility";
 import CheckAvailability from "./csp utils/check_availability";
+import solveNQueen from "./test";
 import { ConvertHourToValue, ConvertTimeToValue, ConvertValueToTime } from "./time utils/time_converter";
 import { AddTime, GetPrecedingDay } from "./time utils/time_modifier";
 
@@ -10,6 +11,7 @@ import { AddTime, GetPrecedingDay } from "./time utils/time_modifier";
 
 
 export default function CSP(inputs: ICSP) {
+    solveNQueen();
     if (!CheckInputsEligibility(inputs)) {
         console.log("canncelled");
         return;

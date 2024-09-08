@@ -15,6 +15,7 @@ import CSP from "./logic/csp";
 import CheckAvailability from "./logic/csp utils/check_availability";
 import { TimeAllocationBufferType } from "./types/csp_types";
 import CheckInputsEligibility from "./logic/check_inputs_eligibility";
+import SchedulingCSP from "./logic/csp_test";
 
 
 
@@ -58,11 +59,19 @@ function App() {
       courses: session.get.courses,
       rooms: session.get.rooms
     }
-    CSP(dat);
-    const arr: Array<TimeAllocationBufferType> = ["0;0;01:01","0;0;02:05","0;0;01:59","0;0;05:20"];
-    // TestCheckAvailability(arr,0,"03:00","04:00","monday");
+
+    const test = new SchedulingCSP(dat);
+    if (!test.Solve()){
+      console.log("INVALIDDDDDDDDDD");
+    }
     
-    console.log(CheckAvailability(arr,0,"03:00","04:00","monday"));
+    // const heh = new SchedulingCSP(dat);
+    // heh.blabla();
+      // CSP(dat);
+    const arr: Array<TimeAllocationBufferType> = ["0;0;01:01", "0;0;02:05", "0;0;01:59", "0;0;05:20"];
+    // TestCheckAvailability(arr,0,"03:00","04:00","monday");
+
+    // console.log(CheckAvailability(arr, 0, "03:00", "04:00", "monday"));
   }
 
   // const course_options = session.get.courses.map((e) => ({ label: e.code, value: e.name }));
