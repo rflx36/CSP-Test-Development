@@ -16,6 +16,7 @@ import CheckAvailability from "./logic/csp utils/check_availability";
 import { TimeAllocationBufferType } from "./types/csp_types";
 import CheckInputsEligibility from "./logic/check_inputs_eligibility";
 import SchedulingCSP from "./logic/csp_test";
+import permute from "./logic/tests";
 
 
 
@@ -57,7 +58,8 @@ function App() {
       break_time_start: session.get.break_time_start,
       break_time_end: session.get.break_time_end,
       courses: session.get.courses,
-      rooms: session.get.rooms
+      rooms: session.get.rooms,
+      rooms_lab: session.get.rooms_lab
     }
 
     const test = new SchedulingCSP(dat);
@@ -68,7 +70,6 @@ function App() {
     // const heh = new SchedulingCSP(dat);
     // heh.blabla();
       // CSP(dat);
-    const arr: Array<TimeAllocationBufferType> = ["0;0;01:01", "0;0;02:05", "0;0;01:59", "0;0;05:20"];
     // TestCheckAvailability(arr,0,"03:00","04:00","monday");
 
     // console.log(CheckAvailability(arr, 0, "03:00", "04:00", "monday"));
@@ -88,6 +89,9 @@ function App() {
   // //1679615
   //   const max = 1679615;
   //   const 
+  const input = [1, 2, 3, 4, 5];
+const allPermutations = permute(input);
+console.log(allPermutations);
   console.log(GenerateTimeSlots("02:00", "04:30"));
   return (
     <>

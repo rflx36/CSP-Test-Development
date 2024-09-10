@@ -20,6 +20,10 @@ export default function CheckInputsEligibility(inputs: ICSP) {
     const room_total_time_available = room_total_time_value_available / 60;
     let total_subjects = 0;
     let room_hours_occupied = 0;
+
+    if (instructors == 0){
+        return false;
+    }
     for (let i = 0; i < courses_amount; i++) {
         const current_course = inputs.courses[i];
         for (let j = 1; j <= 4; j++) {

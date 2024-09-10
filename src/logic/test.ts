@@ -49,7 +49,6 @@ function IsAvailable(board: Array<Array<number>>, row: number, col: number) {
 
 
 
-
 export function solveNQueenUtil(board: Array<Array<number>>, columns: number) {
     
     if (columns >= n) {
