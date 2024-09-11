@@ -1,6 +1,6 @@
 import { ICSP } from "../types/csp_types";
 import { Subject, SubjectHasLabLec, YearType } from "../types/types";
-import { ConvertTimeToValue, ConvertValueToTime } from "./time utils/time_converter";
+import { ConvertTimeToValue } from "./time utils/time_converter";
 
 export default function CheckInputsEligibility(inputs: ICSP) {
     const days_available = 6;

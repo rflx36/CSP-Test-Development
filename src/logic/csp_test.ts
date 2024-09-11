@@ -13,7 +13,7 @@ export default class SchedulingCSP {
 
     public days: Array<WeekType> = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
     public subsequent_subject_day_interval = 3;
-    // public max_session = 5;
+    public max_session = 4; // amount of hours for the day
     public max_instructor_work_hours = 48;
     //inputs
     private instructors: Array<InstructorType> = [];
@@ -38,7 +38,7 @@ export default class SchedulingCSP {
     private current_instructor: number = 0;
     private current_subjects: Array<Subject | SubjectHasLabLec> = [];
     private current_subject: Subject = { title: "", code: "", total_hours: 0, is_dividable: false };
-    // private current_session: number = 0;
+    private current_session:Array<number> = [0,0,0,0,0,0];
     private current_section: string = "";
     private current_course: CourseType = { name: "", code: "" };
     private current_year: YearType = 1;
@@ -97,6 +97,7 @@ export default class SchedulingCSP {
 
             }
             this.instructors[instructor_index].load += result.subject.total_hours;
+            
         }
     }
 
@@ -165,13 +166,14 @@ export default class SchedulingCSP {
                 console.log("max loop reached");
                 return false;
             }
-            // if (this.current_session > 6){
-            //     this.current_time_start = this.time_start;
-            //     this.current_time_end = AddTime(this.time_start, current_allocation);
-            //     this.current_day = GetPrecedingDay(this.current_day, 1);
-            //     this.current_subsequent_day = GetPrecedingDay(this.current_day, this.subsequent_subject_day_interval);
-            //     this.current_session = 0 ;
-            // }
+            const day_index= this.days.indexOf(this.current_day);
+            if ( this.current_session[day_index] > this.max_session){
+                this.current_time_start = this.time_start;
+                this.current_time_end = AddTime(this.time_start, current_allocation);
+                this.current_day = GetPrecedingDay(this.current_day, 1);
+                this.current_subsequent_day = GetPrecedingDay(this.current_day, this.subsequent_subject_day_interval);
+                // this.current_session[day_index] = 0;
+            }
             this.current_time_start = AddTime(this.current_time_start, 30);
             this.current_time_end = AddTime(this.current_time_end, 30);
 
@@ -209,6 +211,9 @@ export default class SchedulingCSP {
             }
         }
         // this.current_session += current_allocation;
+        const day_index= this.days.indexOf(this.current_day);
+        this.current_session[day_index] += (current_allocation /60);
+        console.log(this.current_session);
         return true;
     }
 
@@ -246,7 +251,7 @@ export default class SchedulingCSP {
             }
         }
 
-        const room_sessions_available = CheckRoomTimeAvailability(this.rooms_allocation, this.current_room, this.time_start, this.time_end, this.break_time_start, this.break_time_end, this.days.length);
+        const room_sessions_available = CheckRoomTimeAvailability(this.rooms_allocation, this.current_room, this.time_start, this.time_end, this.break_time_start, this.break_time_end, this.days.length,this.max_session);
         const subjects_to_be_occupied = current_hours_occupied;
 
 
@@ -439,7 +444,7 @@ export default class SchedulingCSP {
             const section_name = (this.current_year + String.fromCharCode(96 + i)).toUpperCase();
 
             this.current_day = "monday";
-            // this.current_session = 0;
+            this.current_session = [0,0,0,0,0,0];
             this.current_section = section_name;
             this.SetRooms();
             if (!this.SetSubjects([], 0)) {
