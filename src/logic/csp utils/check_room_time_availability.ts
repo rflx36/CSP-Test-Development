@@ -17,7 +17,7 @@ export default function CheckRoomTimeAvailability(
     const time_checks_increment = 30;
     const time_start_value = ConvertTimeToValue(time_start);
     const time_end_value = ConvertTimeToValue(time_end);
-
+    // let current_session = 0;
     for (let i = 0; i < days_available; i++) {
 
         const data = room_allocation_store.filter(x => x.startsWith(`${room_index};${i};`));
@@ -32,6 +32,10 @@ export default function CheckRoomTimeAvailability(
                 if (j >= break_time_start && j <= break_time_end){
                     continue;
                 }
+                // if (current_session > (max_session * 60)){
+                //     break;
+                // }
+                // current_session += time_checks_increment;
                 time_value_available += time_checks_increment;
             }
             else if (in_session && time_allocation_list.includes(ConvertValueToTime(j - 1))) {

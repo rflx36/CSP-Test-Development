@@ -11,12 +11,8 @@ import ModalInstructors from "./components/modals/modal_instructors";
 import { useInstructorStore } from "./stores/instructor_store";
 import GenerateSeedContainer from "./page components/class generate/generate_seed";
 import GenerateTimeSlots from "./logic/time utils/time_modifier";
-import CSP from "./logic/csp";
-import CheckAvailability from "./logic/csp utils/check_availability";
-import { TimeAllocationBufferType } from "./types/csp_types";
-import CheckInputsEligibility from "./logic/check_inputs_eligibility";
+
 import SchedulingCSP from "./logic/csp_test";
-import permute from "./logic/tests";
 
 
 
@@ -89,9 +85,7 @@ function App() {
   // //1679615
   //   const max = 1679615;
   //   const 
-  const input = [1, 2, 3, 4, 5];
-const allPermutations = permute(input);
-console.log(allPermutations);
+  
   console.log(GenerateTimeSlots("02:00", "04:30"));
   return (
     <>
